@@ -1,0 +1,88 @@
+﻿@using LMS20.Core.Types
+@model CoursesViewModel
+
+@{ Layout = "_LayoutTeacher"; }
+
+<partial name="CreateCoursePartial" model="new CreateCoursePartialViewModel{}" />
+<partial name="ConfirmDeletePartial" model="new ConfirmDeletePartialViewModel{}" />
+
+<div class="row">
+
+@*Nav-bar*@
+<div class="col-2">
+    <div class="msb" id="msb">
+	    <nav class="navbar navbar-default" role="navigation">
+            <div class="side-menu-container">
+
+	            <ul class="nav navbar-nav central">
+		            <li>
+                        <a asp-action="CreateCoursePartial" class="nav-link text-black" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+                            <i class="central bi bi-mortarboard-fill"></i>
+                            <div class="central-text">Skapa ny kurs</div>
+                        </a>                               
+                    </li>
+                    <li>
+                        <a asp-action="Participants" class="nav-link text-black">
+                            <i class="central bi bi-person-fill"></i>
+                            <div class="central-text">Lägg till ny lärare</div>
+                        </a>
+                    </li>
+	            </ul>
+
+            </div>
+        </nav>  
+    </div>
+</div>
+
+@*Courses List*@
+<div class="col-10" id="courses-list">
+
+    <br /><br />
+    <h1 class="dash-titel">Kurser</h1>
+    <hr />
+    <br />
+@{
+    bool isFound = false;
+    foreach(var item in Model.courses) 
+    {
+        if(item.CourseStatus == Status.Current) {
+            if(!isFound) { isFound = true; 
+                        <span class="coursegroup">Pågående</span> 
+            }
+                    <partial name="CoursePartial" model="@item"/>
+        }
+    }
+}
+
+    <div id="CommingCourses">
+@{  isFound = false;
+    foreach(var item in Model.courses) 
+    {
+        if(item.CourseStatus == Status.Comming) {
+            if(!isFound) { isFound = true; 
+                        <span class="coursegroup">Kommande</span>
+            }
+                    <partial name="CoursePartial" model="@item"/>
+        }
+    }
+}
+    </div>
+
+@{
+    isFound = false;
+    foreach(var item in Model.courses) 
+    {
+        if(item.CourseStatus == Status.Completed) {
+            if(!isFound) { isFound = true; 
+                <span class="coursegroup">Avslutade</span> 
+            }
+            <partial name="CoursePartial" model="@item"/>
+        }
+    }
+}
+</div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

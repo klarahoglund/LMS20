@@ -1,0 +1,63 @@
+﻿@using LMS20.Core
+@using LMS20.Core.Types
+@model CoursePartialViewModel
+
+@{
+    string calloutLevel = string.Empty;
+    string participantsLevel = string.Empty;
+    bool hasProgressbar = false;
+
+    switch(Model.CourseStatus)
+    {
+        case Status.Comming:
+            calloutLevel = "info";
+            participantsLevel = "info";
+            hasProgressbar = false;
+            break;
+
+        case Status.Current:
+            calloutLevel = "success";
+            participantsLevel = "info";
+            hasProgressbar = true;
+            break;
+
+        case Status.Completed:
+            calloutLevel = "default";
+            participantsLevel = "secondary";
+            hasProgressbar = false;
+            break;
+    }
+}
+
+@*<a asp-controller="Courses" asp-action="Modules" asp-route-id="@Model.Id">*@
+
+<div id = "callout" class="bd-callout bd-callout-@calloutLevel">
+
+    <div class="row">
+    <div class="col-10">
+        <span class="course-title"><a asp-controller="Courses" asp-action="Modules" asp-route-id="@Model.Id">@Model.Name</a></span>
+    </div>
+    <div class="col-2 text-end" >
+        <a id = "participantsBtn" asp-controller = "Courses" asp-action = "Participants" asp-route-id = "@Model.Id">
+            <span class="badge rounded-pill bg-@participantsLevel">@Model.NrOfParticipants</span></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        @*<a id = "deleteBtn" asp-controller = "Courses" asp-action = "Delete" asp-route-id = "@Model.Id">*@
+        <a data-id="@Model.Id" data-name="@Model.Name" class="deleteBtn" asp-action="ConfirmDeletePartial" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+            <span class="badge rounded-pill bg-danger">X</span></a>
+    </div>
+    </div>
+
+@if(hasProgressbar)
+{
+    <div class="row">
+    <div class="col-12">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: @Model.Progress%" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+    </div>
+}
+
+</div>
+
+@*</a>*@
