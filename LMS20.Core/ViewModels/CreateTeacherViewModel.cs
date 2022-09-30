@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace LMS20.Core.ViewModels
 {
 #nullable disable
-    public class RegistrationViewModel
+    public class CreateTeacherViewModel
     {
         public string UserName { get { return Email; }  }
 

@@ -7,9 +7,9 @@ namespace LMS20.Core.ViewModels
     public class CreateCoursePartialViewModel
     {
         [Required(ErrorMessage = "Namn är obligatoriskt")]
-        [Display(Name = "Namn")]
+        [Display(Name = "Krusens namn")]
         public string Name { get; set; } = string.Empty;
-
+        [Required(ErrorMessage = "Beskrivning är obligatoriskt")]
         [Display(Name = "Beskrivning")]
         public string Description { get; set; } = string.Empty;
 

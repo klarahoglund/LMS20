@@ -279,6 +279,31 @@ namespace LMS20.Web.Controllers
 
             return RedirectToAction(nameof(Participants));
         }
+        public async Task<IActionResult> CreateTeacher(CreateTeacherViewModel ctViewModel)
+        {
+            ctViewModel.RegistrationInValid = "true";
+            
+            if(ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = ctViewModel.Email,
+                    Email = ctViewModel.Email,
+                    FirstName = ctViewModel.FirstName,
+                    LastName = ctViewModel.LastName
+                };
+                var result = await userManager.CreateAsync(user, ctViewModel.Password);
+                await userManager.AddToRoleAsync(user, "Teacher");
+
+                if (result.Succeeded)
+                {
+                    ctViewModel.RegistrationInValid = "";
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "Det gick inte att lägga till ny lärare");
+            }
+            return RedirectToAction(nameof(Index));
+        }
 
         // EditUser GET metod
         public async Task<IActionResult> EditUser(string? id)

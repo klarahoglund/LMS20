@@ -22,9 +22,13 @@
                         </a>                               
                     </li>
                     <li>
-                        <a asp-action="Participants" class="nav-link text-black">
+                            <a asp-action="AddTeacherPartial" class="nav-link text-black" data-bs-toggle="modal"
+                               data-bs-target="#createteacher">
+                                
                             <i class="central bi bi-person-fill"></i>
                             <div class="central-text">Lägg till ny lärare</div>
+
+
                         </a>
                     </li>
 	            </ul>
@@ -82,7 +86,9 @@
 }
 </div>
 </div>
-
+<div class="modal fade" id="createteacher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name = "AddTeacherPartial" model = "new CreateTeacherViewModel{CourseId = @Model.Id}" />
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

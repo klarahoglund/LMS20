@@ -12,11 +12,11 @@ namespace LMS20.Core.Entities
     public class ApplicationUser : IdentityUser
     {
         [Display(Name = "Förnamn")]
-        [StringLength(250)]
+        [StringLength(25)]
         public string FirstName { get; set; }
 
         [Display(Name = "Efternamn")]
-        [StringLength(250)]
+        [StringLength(25)]
         public string LastName { get; set; }
 
   
