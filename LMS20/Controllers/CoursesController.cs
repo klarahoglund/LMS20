@@ -66,6 +66,11 @@ namespace LMS20.Web.Controllers
             }
 
             coursesView.courses = coursesViewList;
+            //var x = coursesViewList.GroupBy(c => c.CourseStatus).Select(g => new TestViewModel
+            //{
+            //    Status = g.Key,
+            //    Courses = g.ToList()
+            //});
 
             return View(coursesView);
         }
@@ -102,7 +107,7 @@ namespace LMS20.Web.Controllers
         [Authorize(Roles = "Teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateCoursePartialViewModel viewModel)
+        public async Task<IActionResult> Create(CreatePartialModuleViewModel viewModel)
         {
             if(ModelState.IsValid)
             {
@@ -211,7 +216,38 @@ namespace LMS20.Web.Controllers
             }
             return View(course);
         }
+        [Authorize(Roles = "Teacher")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCourse(int id, [Bind("Id,Name,Description,StartDateTime,Duration")] Course course)
+        {
+            if (id != course.Id)
+            {
+                return NotFound();
+            }
 
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    db.Update(course);
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CourseExists(course.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(course);
+        }
         private bool CourseExists(int id)
         {
             return (db.Courses?.Any(e => e.Id == id)).GetValueOrDefault();
@@ -360,23 +396,74 @@ namespace LMS20.Web.Controllers
         {
             return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        public IActionResult Modules(int? id)
+
+
+        //public IActionResult Modules(int? id)
              
+        //{
+        //    var course = db.Courses.FirstOrDefault(m => m.Id == id);
+
+
+        //    var modulesModel = new ModulesViewModel
+        //    {
+        //        Course = course,
+        //        CourseName = course.Name,
+        //        Description = course.Description,
+        //    };
+
+        //    ViewData["CourseId"] = course.Id;
+
+        //    return View(modulesModel);
+        //}
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Modules(int? id)
         {
-            var course = db.Courses.FirstOrDefault(m => m.Id == id);
-
-
-            var modulesModel = new ModulesViewModel
+            var course = db.Courses.FirstOrDefault(m => m.Id == id); //Vår kurs
+            var modules = db.Modules.Where(m => m.CourseId == id);
+            var modulesPartialViewList = new List<ModulesPartialViewModel>();
+            var ModuleView = new ModulesViewModel
             {
                 Course = course,
                 CourseName = course.Name,
                 Description = course.Description,
+                CourseId = course.Id,
+                CourseModules= modules,
             };
+
+            if (ModelState.IsValid)
+            {
+                ModulesPartialViewModel viewModel;
+                foreach (var module in modules)
+                {
+                    Status cStatus = 0;
+                    if (module.Start > DateTime.Now) cStatus = Status.Comming;
+                    if (module.Start < DateTime.Now && course.End > DateTime.Now) cStatus = Status.Current;
+                    if (module.End < DateTime.Now) cStatus = Status.Completed;
+
+                    viewModel = new ModulesPartialViewModel
+                    {
+                        Id = course.Id,
+                        CourseName = module.Name,
+                        Start = module.Start,
+                        End = module.End,
+                        ModuleStatus = cStatus,
+                        Description = module.Description,
+                        Name = module.Name,
+
+                    };
+                    modulesPartialViewList.Add(viewModel);
+
+                   
+                }
+            }
+
+            ModuleView.ModulesPartialVMs = modulesPartialViewList;
 
             ViewData["CourseId"] = course.Id;
 
-            return View(modulesModel);
+            return View(ModuleView);
         }
+
 
     }
 }

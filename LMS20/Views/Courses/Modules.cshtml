@@ -1,102 +1,224 @@
-﻿@model ModulesViewModel
+﻿@using LMS20.Core.Types
+@model ModulesViewModel
 
 
 @{
     ViewData["Title"] = "Module";
-     Layout = "_Layout";
+    Layout = "_Layout";
+    //int courseId = (int)ViewData["CourseId"];
+    var courseId = Model.CourseId;
 }
 
 
-<h1 id="participantsTitle" class="title title-main">Översikt</h1>
-<hr />
-@*@Html.DisplayNameFor(model => model.ApplicationUsers.FirstOrDefault()!.FirstName)*@
-<div class="container-fluid">
-    <div class="row justify-content-around mt-5 pt-5 mb-5">
-
-        <div class="col-8">
-            <h1 class="dash-titel">Kursbeskrivning</h1>
-            <hr class="mb-5">
-            <p>
-               @Model.Description
-            </p>
-         </div>
 
 
-        <div class="accordion  col-8 lecture  mt-5" id="accordion-module">
-                <div class="accordion-item panel ">
-            
-                        <h5 class="mb-0 accordion-header" id="" >
-                        <a class="accordion-button collapsed dash-titel " 
-                                data-bs-toggle="collapse" 
-                                data-bs-target="#One" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Kursfiler
-                        </a>
-                        </h5>
-                    <div id="One" class="accordion-collapse collapse" 
-                         data-bs-parent="#accordion">
-                    <div class="accordion-body m-3" > Här ska det ligga filer</div>
-                    </div>
-                        
-                    
-                 </div>
-        </div>
-      
-        <div class="accordion  col-8 lecture  mt-5" id="accordion-module">
-        <div class="accordion-item panel ">
 
-            <h5 class="mb-0 accordion-header" id="">
-                <a class="accordion-button collapsed dash-titel "
-                   data-bs-toggle="collapse"
-                   data-bs-target="#Two" aria-expanded="false" aria-controls="flush-collapseOne">
-                   Modul 1
+@*<div class="container-fluid">*@
+
+
+
+<div class="row justify-content-around ">
+
+    <div class="col-8 accordion">
+
+        <button type="button" class="  d-flex p-2  accordion-button warning accordion-toggle dash-titel boxed accordion-main type-files air-top pe-3 " data-bs-toggle="collapse" data-bs-target="#One">
+
+            <div class="mr-2 flex-grow-1 ">
+
+
+                Kursbeskrivning
+            </div>
+            <div class="mr-2  ">
+                <div class="pe-3 m-2">
+                    <a asp-controller="Home" asp-action="EditCourse" asp-route-id="@Model.CourseId" class="btn btn-outline-dark  ">
+                    <i title="Redigera kurs" class="bi bi-pencil-square"></i>
                 </a>
-            </h5>
-            <div id="Two" class="accordion-collapse collapse"
-                 data-bs-parent="#accordion">
-                <div class="accordion-body m-3"> Här ska det ligga information och möjlighet att lämna in uppgifter</div>
+                </div>
+              
+                <i class=" "></i>
+               
             </div>
 
 
+        </button>
+
+        <div class="boxed acc-body accordion-collapse  collapse " id="One">
+
+            <p class=" air">
+
+                @Model.Description
+            </p>
         </div>
-    </div>
 
-    
-    </div>
-</div>
-<!-- The Modal knapp och titel: länk till target och inställd på modal-->
-<div class="container mt-3">
-    <h3>Modal Example</h3>
-    <p>Click on the button to open the modal.</p>
+        <button type="button" class="accordion-button  info accordion-toggle dash-titel boxed accordion-main type-files  col-12 " data-bs-toggle="collapse" data-bs-target="#Two">
+            <span id="pilen"><i class=""></i></span>
+            Kursfiler
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-        Open modal
-    </button>
-</div>
+        </button>
 
-<!-- The Modal -->
-<div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Modal Heading</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                Modal body..
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            </div>
-
+        <div class="boxed acc-body accordion-collapse  collapse " id="Two">
+            <p class=" air">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
     </div>
 </div>
 
 
-                             
+
+
+
+<div class="row justify-content-around ">
+
+    <div class="col-8 accordion">
+
+        <h1 class="dash-titel air-top col-12 ps-3 pt-3">Moduler</h1>
+        <hr class="col-12 ">
+        @{
+            bool isFound = false;
+            foreach (var item in Model.ModulesPartialVMs)
+            {
+
+                if (item.ModuleStatus == Status.Current)
+                {
+                    if (!isFound)
+                    {
+                        isFound = true;
+                        <span class="coursegroup">Pågående</span>
+                    }
+                    <partial name="ModulePartial" model="@item" />
+                }
+            }
+        }
+
+        <div id="CommingCourses">
+            @{
+                isFound = false;
+                foreach (var item in Model.ModulesPartialVMs)
+                {
+                    if (item.ModuleStatus == Status.Comming)
+                    {
+                        if (!isFound)
+                        {
+                            isFound = true;
+                            <div class="coursegroup pt-1 ">Kommande</div>
+                        }
+                        <partial name="ModulePartial" model="@item" />
+                    }
+                }
+            }
+        </div>
+
+        @{
+            isFound = false;
+            foreach (var item in Model.ModulesPartialVMs)
+            {
+                if (item.ModuleStatus == Status.Completed)
+                {
+                    if (!isFound)
+                    {
+                        isFound = true;
+                        <span class="coursegroup ">Avslutade</span>
+                    }
+                    <partial name="ModulePartial" model="@item" />
+                }
+            }
+        }
+    </div>
+</div>
+@*  <button class="accordion col-8 mt-5 lecture">Modul 1</button>
+        <div class="panel col-8">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>*@
+
+@* <button class="accordion col-8 mt-5 lecture">Modul 2</button>
+        <div class="panel col-8">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>*@
+<!--ACCORDION-->
+@* <div class="accordion  col-8 lecture  mt-5" id="accordion-module">
+            <div class="accordion-item">
+                <h5 class="accordion-header mb-0" id="Heading-1">
+                    <button class="accordion-button collapsed dash-titel "
+                            data-bs-toggle="collapse"
+                            data-bs-target="#One"
+                            aria-controls="One"
+                            aria-expanded="true">
+
+                        Kursfiler
+                    </button>
+                </h5>
+                <div id="One" class="accordion-collapse collapse " aria-labelledby="Heading-1"
+                     data-bs-parent="#accordion-module">*@
+@*a-lab...kopplat till ACCONS-HEADER(H5) id*@
+@*parent kopplat till hela accons id*@
+@*<div class="accordion-body m-3">
+                        Här ska det ligga filer*@
+@* </div>  <!--stänger bodyn-->
+                </div><!--stänger innehållet-->
+            </div><!--stänger item-->
+        </div><!--stänger Accon-->
+        @*
+        <div class="accordion-item panel ">
+        <h5 class="accordion-header mb-0" id="HeadingTwo">
+        <button class="accordion-button collapsed dash-titel "
+        data-bs-toggle="collapse"
+        data-bs-target="#parttwo"
+        aria-controls="parttwo"
+        aria-expanded="true">
+
+        Modul 1
+        </button>
+        </h5>
+        <div id="parttwo" class="accordion-collapse collapse " aria-labelledby="HeadingTwo"
+        data-bs-parent="#accordion-module">
+        @*a-lab...kopplat till ACCONS-HEADER(H5) id*@
+@*parent kopplat till hela accons id*@
+@* <div class="accordion-body m-3">
+        Här ska det ligga filer*@
+@* </div>  <!--stänger bodyn-->
+        </div><!--stänger innehållet-->*@
+@*</div><!--stänger item-->*@
+
+
+
+
+
+
+@*
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Accordion Item #1
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Accordion Item #2
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Accordion Item #3
+            </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            </div>
+        </div>
+    </div>
+</div>*@

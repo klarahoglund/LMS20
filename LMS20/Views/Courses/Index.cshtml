@@ -3,9 +3,9 @@
 
 @{ Layout = "_LayoutTeacher"; }
 
-<partial name="CreateCoursePartial" model="new CreateCoursePartialViewModel{}" />
+<partial name="CreateCoursePartial" model="new CreatePartialModuleViewModel{}" />
 <partial name="ConfirmDeletePartial" model="new ConfirmDeletePartialViewModel{}" />
-
+@* <partial name = "AddTeacherPartial" model = "new CreateTeacherViewModel{}" />*@
 <div class="row">
 
 @*Nav-bar*@
@@ -23,7 +23,7 @@
                     </li>
                     <li>
 
-                            <a  asp-action="AddTeacherPartial" class="nav-link text-black"
+                            <a  asp-action="AddTeacherPartial"id="modal"class="nav-link text-black"
                                data-bs-toggle="modal"
                                                             data-bs-target="#createteacher">
                                 

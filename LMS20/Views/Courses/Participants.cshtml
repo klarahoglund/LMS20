@@ -13,11 +13,14 @@
 
 @if(User.IsInRole("Teacher"))
 {
+       <!-- The Modal startaren -->
     <button 
     type = "button" 
-    class = "float-end btn btn-outline-dark" 
+    class = "float-end btn btn-outline-dark"
+        title="Lägg till elev"
     data-bs-toggle = "modal" 
     data-bs-target = "#addstudent"><i class="bi bi-person-plus-fill"></i>
+
     </button>
 }
 
@@ -67,9 +70,16 @@
         </tbody>
 </table>
 
-<div class = "modal fade" id = "addstudent" tabindex = "-1" role = "dialog" aria-labelledby = "exampleModalLabel" aria-hidden = "true">
+<div class = "modal "  id = "addstudent" tabindex = "-1" role ="dialog" aria-labelledby = "exampleModalLabel" @*aria-hidden = "true"*@>
     <partial name = "AddStudentPartial" model = "new RegistrationViewModel{CourseId = @Model.Id}" />
+   @* data-backdrop= "false"*@
 </div>
+
+
+@*<div class="modal fade" id="addstudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="AddStudentPartial" model="new RegistrationViewModel{CourseId = @Model.Id}" />
+</div>*@
+
 
 @section Scripts
 {

@@ -13,7 +13,7 @@ namespace LMS20.Core.Validations
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            var vm = validationContext.ObjectInstance as CreateCoursePartialViewModel;
+            var vm = validationContext.ObjectInstance as CreatePartialModuleViewModel;
             var validationService = (IValidateDateService)validationContext.GetService(typeof(IValidateDateService));
 
             string result = validationService.ValidateCourseDate(vm.Start, vm.End).Result;
